@@ -15,25 +15,27 @@ end
 
 function add_edge!(g::PebbleGraph, i::Int64, j::Int64)
     if g.pebbles[i] != 2 || g.pebbles[j] != 2
-        return
+        return false
     end
     if connected(g,i,j) || connected(g,j,i)
-        return
+        return false
     end
     g.pebbles[i] -= 1
     connect!(g,i,j)
+    return true
 end
 
 function slide_move!(g::PebbleGraph, i::Int64, j::Int64)
     if !connected(g,i,j)
-        return
+        return false
     end
     if g.pebbles[j]<1
-        return
+        return false
     end
     reverse!(g,i,j)
     g.pebbles[j]-=1
     g.pebbles[i]+=1
+    return true
 end
 
 end
