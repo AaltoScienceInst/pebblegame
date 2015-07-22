@@ -37,8 +37,9 @@ function simple_graph (v_count::Int64, directed::Bool=true)
     return g
 end
 
-function rigidity_graph (n_m::Matrix{Int64}, v_pos::Array{Float64,2})
-    g = RigidityGraph (false, n_m, v_pos)Â
+function rigidity_graph (v_pos::Array{Float64,2})
+    s = size(v_pos)[1]
+    g = RigidityGraph (false, zeros(Bool, s, s), v_pos)Â
     return g
 end
 
