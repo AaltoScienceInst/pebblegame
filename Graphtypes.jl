@@ -8,6 +8,7 @@ export
     simple_graph,
     rigidity_graph,
     connected,
+    total_edges,
     connect!,
     disconnect!,
     reverse!
@@ -47,6 +48,10 @@ function connected(g::Graph, from::Int64, to::Int64)
     else
         return g.n_m[from, to] || g.n_m[to, from] == 1
     end
+end
+
+function total_edges(g::Graph)
+    return sum(g.n_m)
 end
 
 function connect!(g::Graph, from::Int64, to::Int64)
