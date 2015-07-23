@@ -7,35 +7,40 @@ export
     add_edge!,
     slide_move!
 
-
-function basic_pebble_game (size::Int64)
-    g = PebbleGraph (true, zeros(size, size), 2*ones(size))
-    return g
+type PebbleGame
+    graph::Graph
+    pebbles::Array{Int64,1}
+    l::Int64
 end
 
-function add_edge!(g::PebbleGraph, i::Int64, j::Int64)
-    if g.pebbles[i] != 2 || g.pebbles[j] != 2
+function basic_pebble_game (s::Int64, k::Int64, l::Int64)
+    g = simple_graph(s, true)
+    p = PebbleGame(g, k*ones(s), l)
+    return p
+end
+
+function add_edge!(p::PebbleGame, i::Int64, j::Int64)
+    if p.pebbles[i] != 2 || p.pebbles[j] != 2
         return false
     end
-    if connected(g,i,j) || connected(g,j,i)
+    if connected(p.graph,i,j) || connected(p.graph,j,i)
         return false
     end
-    g.pebbles[i] -= 1
-    connect!(g,i,j)
+    p.pebbles[i] -= 1
+    connect!(p.graph,i,j)
     return true
 end
 
-function slide_move!(g::PebbleGraph, i::Int64, j::Int64)
-    if !connected(g,i,j)
+function slide_move!(p::PebbleGame, i::Int64, j::Int64)
+    if !connected(p.graph,i,j)
         return false
     end
-    if g.pebbles[j]<1
+    if p.pebbles[j]<1
         return false
     end
-    reverse!(g,i,j)
-    g.pebbles[j]-=1
-    g.pebbles[i]+=1
+    reverse!(p.graph,i,j)
+    p.pebbles[j]-=1
+    p.pebbles[i]+=1
     return true
 end
-
 end

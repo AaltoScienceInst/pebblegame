@@ -1,12 +1,13 @@
 module Graphtypes
 
 export
+    Graph,
     SimpleGraph,
-    RigidityGraph,
-    PebbleGraph,
+    VertexGraph,
 
     simple_graph,
-    rigidity_graph,
+    vertex_graph,
+
     connected,
     total_edges,
     connect!,
@@ -20,16 +21,10 @@ type SimpleGraph <: Graph
     n_m::Matrix{Bool} #adjacency matrix
 end
 
-type RigidityGraph <: Graph
+type VertexGraph <: Graph
     directed::Bool
     n_m::Matrix{Bool}
     v_pos::Array{Float64,2}
-end
-
-type PebbleGraph <: Graph
-    directed::Bool
-    n_m::Matrix{Bool}
-    pebbles::Array{Int64,1}
 end
 
 function simple_graph (v_count::Int64, directed::Bool=true)
@@ -37,9 +32,9 @@ function simple_graph (v_count::Int64, directed::Bool=true)
     return g
 end
 
-function rigidity_graph (v_pos::Array{Float64,2})
+function vertex_graph (v_pos::Array{Float64,2})
     s = size(v_pos)[1]
-    g = RigidityGraph (false, zeros(Bool, s, s), v_pos)Â
+    g = VertexGraph (false, zeros(Bool, s, s), v_pos)Â
     return g
 end
 

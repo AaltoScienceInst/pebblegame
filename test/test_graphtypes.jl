@@ -15,8 +15,8 @@ V = [   0.1 2.0;
         9.6 0.1;
         7.1 6.5]
 
-#Rigidity graphs are supposed to be not directed
-r = rigidity_graph(V)
+#Vertex graphs are supposed to be not directed
+r = vertex_graph(V)
 connect!(r, 1, 3)
 @test connected(r, 1, 3)
 @test connected(r, 3, 1)
