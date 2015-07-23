@@ -1,7 +1,7 @@
 using Base.Test
 using Graphtypes
 
-#simple graph is directed
+#simple directed graph
 g = simple_graph(10)
 connect!(g,1,5)
 @test connected(g,1,5)
@@ -15,8 +15,8 @@ V = [   0.1 2.0;
         9.6 0.1;
         7.1 6.5]
 
-#Vertex graphs are supposed to be not directed
-r = vertex_graph(V)
+#undirected vertex graph
+r = vertex_graph(V,false)
 connect!(r, 1, 3)
 @test connected(r, 1, 3)
 @test connected(r, 3, 1)

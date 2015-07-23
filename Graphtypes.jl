@@ -33,9 +33,9 @@ function simple_graph (v_count::Int64, directed::Bool=true)
     return g
 end
 
-function vertex_graph (v_pos::Array{Float64,2})
+function vertex_graph (v_pos::Array{Float64,2}, directed::Bool=true)
     s = size(v_pos)[1]
-    g = VertexGraph (false, zeros(Bool, s, s), v_pos)Â
+    g = VertexGraph (directed, zeros(Bool, s, s), v_pos)Â
     return g
 end
 
