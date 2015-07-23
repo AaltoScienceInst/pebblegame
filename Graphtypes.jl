@@ -9,21 +9,22 @@ export
     vertex_graph,
 
     connected,
+    connections,
     total_edges,
     connect!,
     disconnect!,
     reverse!
 
-abstract Graph{directed, n_m}
+abstract Graph{directed, vertices}
 
 type SimpleGraph <: Graph
     directed::Bool
-    n_m::Matrix{Bool} #adjacency matrix
+    vertices::Matrix{Float64} #adjacency matrix
 end
 
 type VertexGraph <: Graph
     directed::Bool
-    n_m::Matrix{Bool}
+    vertices::Matrix{Float64}
     v_pos::Array{Float64,2}
 end
 
@@ -40,26 +41,43 @@ end
 
 function connected(g::Graph, from::Int64, to::Int64)
     if g.directed
-        return g.n_m[from, to] == 1
+        return g.vertices[from, to] != 0
     else
-        return g.n_m[from, to] || g.n_m[to, from] == 1
+        return g.vertices[from, to] !=0 || g.vertices[to, from] != 0
+    end
+end
+
+function connections(g::Graph, from::Int64, to::Int64)
+    if g.directed
+        return g.vertices[from, to]
+    else
+        return g.vertices[from, to] + g.vertices[to, from]
     end
 end
 
 function total_edges(g::Graph)
-    return sum(g.n_m)
+    return sum(g.vertices)
 end
 
 function connect!(g::Graph, from::Int64, to::Int64)
-    g.n_m[from, to] = 1
+    g.vertices[from, to] += 1
 end
 
 function disconnect!(g::Graph, from::Int64, to::Int64)
-    g.n_m[from, to] = 0
+    if g.vertices[from, to] > 0
+        g.vertices[from, to] -= 1
+        return true
+    else
+        return false
+    end
 end
 
 function reverse!(g::Graph, i1::Int64, i2::Int64)
-    g.n_m[i1, i2], g.n_m[i2, i1] = g.n_m[i2, i1], g.n_m[i1, i2]
+    if disconnect!(g,i1,i2)
+        connect!(g,i2,i1)
+        return true
+    end
+    return false
 end 
 
 end
