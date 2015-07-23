@@ -41,4 +41,4 @@ p = basic_pebble_game(4, 2, 1)
 @test connected(p.graph, 3, 4)
 @test connected(p.graph, 2, 4)
 
-@test total_edges(p) == 5
+@test total_edges(p.graph) == 5

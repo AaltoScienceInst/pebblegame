@@ -10,20 +10,34 @@ export
 type PebbleGame
     graph::Graph
     pebbles::Array{Int64,1}
+    k::Int64
     l::Int64
 end
 
+#=
+    BASIC (k, l) PEBBLE GAME
+    from Pebble Game Algorithms and Sparse Graphs - Lee & Streinu
+    http://arxiv.org/pdf/math/0702129.pdf
+    
+    Rules:
+        - vertex can hold up to k pebbles
+        - new edge is accepteble if at least l+1 pebbles at endpoints
+    Moves:
+        - slide move: if there's at a connection i,j and at least one
+            pebble on j, reverse i,j and move a pebble from j to i
+        - add edge move: add an acceptable edge i,j and remove a
+        pebble from i
+
+=#
+
 function basic_pebble_game (s::Int64, k::Int64, l::Int64)
     g = simple_graph(s, true)
-    p = PebbleGame(g, k*ones(s), l)
+    p = PebbleGame(g, k*ones(s), k ,l)
     return p
 end
 
 function add_edge!(p::PebbleGame, i::Int64, j::Int64)
-    if p.pebbles[i] != 2 || p.pebbles[j] != 2
-        return false
-    end
-    if connected(p.graph,i,j) || connected(p.graph,j,i)
+    if p.pebbles[i] < p.l+1 || p.pebbles[j] < p.l+1
         return false
     end
     p.pebbles[i] -= 1
@@ -36,6 +50,9 @@ function slide_move!(p::PebbleGame, i::Int64, j::Int64)
         return false
     end
     if p.pebbles[j]<1
+        return false
+    end
+    if p.pebbles[i]>=p.k
         return false
     end
     reverse!(p.graph,i,j)
