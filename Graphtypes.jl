@@ -48,8 +48,12 @@ function list_edges(g::Graph)
 end
 
 function list_outgoing(g::Graph, from::Int64)
-    return find( x->(x != 0), g.vertices[from, :])
-end
+    if g.directed
+        return find( x->(x != 0), g.vertices[from, :])
+    else
+        return sort(unique([    find( x->(x != 0), g.vertices[from, :]),
+                    find( x->(x != 0), g.vertices[:, from])]))
+end end
 
 function connected(g::Graph, from::Int64, to::Int64)
     if g.directed

@@ -57,15 +57,17 @@ g = simple_graph(25,false)
 for i=(0:4)*5
     for j=1:5
         if (j%5)!=0
-            connect!(g, i+j, i+j+1); connect!(g, i+j+1, i+j)
+            connect!(g, i+j, i+j+1);
         end
         if i!=20
-            connect!(g, i+j, i+j+5); connect!(g, i+j+5, i+j)
+            connect!(g, i+j, i+j+5);
         end
 end end
 
 blocks = [2, 7, 9, 14, 16, 17, 18]
 
+@test length(depth_first_search(g, 1, 5, (g,x)->(x==21))) == 5
+@test length(depth_first_search(g, 21, 5, (g,x)->(x==1))) == 5
 #successful search
 @test length(depth_first_search(g, 23, 14, (g,x)->(x==1),blocks)) == 15
 @test 9 <= length(depth_first_search(g, 1, 25, (g,x)->(x==25))) <= 25

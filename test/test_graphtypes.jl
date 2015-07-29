@@ -35,9 +35,12 @@ V = [   0.1 2.0;
 #undirected vertex graph
 r = vertex_graph(V,false)
 connect!(r, 1, 3)
+connect!(r, 2, 1)
+connect!(r, 4, 1)
 @test connected(r, 1, 3)
 @test connected(r, 3, 1)
 @test total_vertices(r) == 4
+@test list_outgoing(r, 1) == [2,3,4]
 
 
 
