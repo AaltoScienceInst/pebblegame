@@ -14,6 +14,9 @@ connect!(g, 5, 7)
 
 #successful search with an unambiguous path
 @test depth_first_search(g, 1, 7, (g,x)->(x==7)) == [1, 2, 5, 7]
+#allow matching before moving only if start not in blocklist
+@test depth_first_search(g, 1, 7, (g,x)->(x<3), [1]) == [1,2]
+@test depth_first_search(g, 1, 7, (g,x)->(x<3)) == [1]
 
 g = simple_graph(9)
 

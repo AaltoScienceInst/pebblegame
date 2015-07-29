@@ -16,9 +16,12 @@ function depth_first_search(g::Graph, starting_point::Int64, max_depth::Int64,
         neighbours = list_outgoing(g, current)
 
         if f(g, current)
-            #expected condition is met
-            return path
-        end
+
+            #ignore match if it's a blacklisted starting point
+            if !((current == starting_point) && (starting_point in blacklist))
+                #expected condition is met
+                return path
+        end end
         
         #find next place to be
         next_index = findfirst(
