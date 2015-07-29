@@ -1,11 +1,14 @@
 module Pebblegames
 
 using Graphtypes
+using Graphsearch
 
 export
+    solve_basic_pebble_game,
     basic_pebble_game,
     add_edge!,
-    slide_move!
+    slide_move!,
+    go_get_pebbles!
 
 type PebbleGame
     graph::Graph
@@ -27,8 +30,46 @@ end
             pebble on j, reverse i,j and move a pebble from j to i
         - add edge move: add an acceptable edge i,j and remove a
         pebble from i
-
 =#
+function solve_basic_pebble_game(graph::Graph, k::Int64, l::Int64)
+
+    vt= total_vertices(graph)
+    et = total_edges(graph)
+    
+    game = basic_pebble_game(vt, k, l)
+    edges = list_edges(graph)
+    rejected_count = 0
+    for n=1:et
+        i = edges[n,1]
+        j = edges[n,2]
+        print(game,"\n")
+
+        print((i,j))
+        if add_edge!(game, i, j)
+            #successfully added an edge, move on
+            print("edge added!\n")
+            continue
+        else
+            if game.pebbles[i] < game.l+1
+                print("looking for pebbles for i:")
+                if !go_get_pebbles!(game, i, [i, j])
+                    rejected_count += 1
+                    print("failed")
+                    continue
+                print("success")
+            end end
+            if game.pebbles[j] < game.l+1
+                print("looking for pebbles for j:")
+                if !go_get_pebbles!(game, j, [i, j])
+                    rejected_count += 1
+                    print("failed")
+                    continue
+            end end
+            
+            print(add_edge!(game, i, j))
+    end end
+    return sum(game.pebbles), rejected_count
+end
 
 function basic_pebble_game (s::Int64, k::Int64, l::Int64)
     g = simple_graph(s, true)
@@ -60,4 +101,25 @@ function slide_move!(p::PebbleGame, i::Int64, j::Int64)
     p.pebbles[i]+=1
     return true
 end
+
+function go_get_pebbles!(game::PebbleGame, node::Int64,
+                            blacklist::Array{Int64,1})
+    graph = game.graph
+    pebbles = game.pebbles
+    #helper function that looks for available pebbles and moves them to node
+    for i=1:(game.l+1 - pebbles[node]) #find missing pebbles for i
+        path = depth_first_search(graph, node, total_vertices(graph), 
+                                (g,x)->(pebbles[x]>0), blacklist)
+        
+        path = reverse(path)
+        #go fetch that pebble
+        for pair in zip(path,path[2:end])
+            x,y = pair
+            slide_move!(game,y,x)
+    end end
+    #return whether collection was successful
+    return pebbles[node] == game.l+1
+end
+
+
 end
