@@ -22,29 +22,34 @@ abstract Graph{directed, vertices}
 
 type SimpleGraph <: Graph
     directed::Bool
-    vertices::Matrix{Float64} #adjacency matrix
+    vertices::Matrix{Int64} #adjacency matrix
 end
 
 type VertexGraph <: Graph
     directed::Bool
-    vertices::Matrix{Float64}
+    vertices::Matrix{Int64}
     v_pos::Array{Float64,2}
 end
 
 function simple_graph (v_count::Int64, directed::Bool=true)
-    g = SimpleGraph(directed, zeros(Bool, v_count, v_count))
+    g = SimpleGraph(directed, zeros(Int64, v_count, v_count))
     return g
 end
 
 function vertex_graph (v_pos::Array{Float64,2}, directed::Bool=true)
     s = size(v_pos)[1]
-    g = VertexGraph (directed, zeros(Bool, s, s), v_pos)Â
+    g = VertexGraph (directed, zeros(Int64, s, s), v_pos)Â
     return g
 end
 
 function list_edges(g::Graph)
-    points = findn(g.vertices)
-    return [points[1] points[2]]
+    size = total_vertices(g)
+    edges = Array(Int64, 0, 2)
+    for i in 1:size
+        for j in 1:size
+            edges = [edges, [i j]]
+    end end
+    return edges
 end
 
 function list_outgoing(g::Graph, from::Int64)
