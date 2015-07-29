@@ -5,11 +5,11 @@ using Graphtypes
 export
     depth_first_search
 
-function depth_first_search(g::Graph, starting_point::Int64,
-    max_depth::Int64, f::Function)
+function depth_first_search(g::Graph, starting_point::Int64, max_depth::Int64,
+    f::Function, blacklist::Array{Int64,1}=Array((Int64),0))
     
     path = [starting_point]
-    visited = [starting_point]
+    visited = [starting_point, blacklist]
     
     while length(path) != 0
         current = path[end]

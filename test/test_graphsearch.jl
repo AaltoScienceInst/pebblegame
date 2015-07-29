@@ -12,8 +12,8 @@ connect!(g, 5, 2)
 connect!(g, 2, 5)
 connect!(g, 5, 7)
 
-@test depth_first_search(g, 1, 7, (g,x)->(x==7)) == [1,2,5,7]
-
+#successful search with an unambiguous path
+@test depth_first_search(g, 1, 7, (g,x)->(x==7)) == [1, 2, 5, 7]
 
 g = simple_graph(9)
 
@@ -38,3 +38,33 @@ connect!(g, 5, 4)
 @test length(depth_first_search(g, 1, 9, (g,x)->(x==8))) >= 4
 #failed search
 @test length(depth_first_search(g, 4, 9, (g,x)->(x==6))) == 0
+
+# 1   2   3   4   5
+# o - x - o - o - o 0
+# |   |   |   |   |
+# o - x - o - x - o 5
+# |   |   |   |   |
+# o - o - o - x - o 10
+# |   |   |   |   |
+# x - x - x - o - o 15
+# |   |   |   |   |
+# o - o - o - o - o 20
+
+g = simple_graph(25,false)
+for i=(0:4)*5
+    for j=1:5
+        if (j%5)!=0
+            connect!(g, i+j, i+j+1); connect!(g, i+j+1, i+j)
+        end
+        if i!=20
+            connect!(g, i+j, i+j+5); connect!(g, i+j+5, i+j)
+        end
+end end
+
+blocks = [2, 7, 9, 14, 16, 17, 18]
+
+#successful search
+@test length(depth_first_search(g, 23, 14, (g,x)->(x==1),blocks)) == 15
+@test 9 <= length(depth_first_search(g, 1, 25, (g,x)->(x==25))) <= 25
+#failed search
+@test length(depth_first_search(g, 1, 25, (g,x)->(x==25),[17,18,19,20,22])) ==0
