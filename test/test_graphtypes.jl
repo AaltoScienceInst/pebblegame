@@ -17,7 +17,6 @@ connect!(g,9,4)
 connect!(g,5,9)
 connect!(g,9,9)
 
-@test list_incoming(g,9) == [5, 9]
 @test list_outgoing(g,9) == [4, 7, 9, 10]
 
 connect!(g,4,5)
@@ -25,6 +24,8 @@ connect!(g,4,5)
 connect!(g,5,4)
 
 @test count_connections(g,4,5) == 2
+@test total_vertices(g) == 10
+
 
 V = [   0.1 2.0;
         4.0 2.5;
@@ -36,7 +37,7 @@ r = vertex_graph(V,false)
 connect!(r, 1, 3)
 @test connected(r, 1, 3)
 @test connected(r, 3, 1)
-
+@test total_vertices(r) == 4
 
 
 

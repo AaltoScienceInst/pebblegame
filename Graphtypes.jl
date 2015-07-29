@@ -10,9 +10,10 @@ export
 
     connected,
     count_connections,
-    list_incoming,
     list_outgoing,
     total_edges,
+    total_vertices,
+    list_edges,
     connect!,
     disconnect!,
     reverse!
@@ -41,8 +42,9 @@ function vertex_graph (v_pos::Array{Float64,2}, directed::Bool=true)
     return g
 end
 
-function list_incoming(g::Graph, to::Int64)
-    return find( x->(x != 0), g.vertices[:, to])
+function list_edges(g::Graph)
+    points = findn(g.vertices)
+    return [points[1] points[2]]
 end
 
 function list_outgoing(g::Graph, from::Int64)
@@ -67,6 +69,10 @@ end
 
 function total_edges(g::Graph)
     return sum(g.vertices)
+end
+
+function total_vertices(g::Graph)
+    return size(g.vertices)[2]
 end
 
 function connect!(g::Graph, from::Int64, to::Int64)
