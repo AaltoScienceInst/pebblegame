@@ -23,6 +23,8 @@ connect!(g,4,5)
 connect!(g,4,5)
 connect!(g,5,4)
 
+@test length(list_edges(g)) == 2 * 10
+
 @test count_connections(g,4,5) == 2
 @test total_vertices(g) == 10
 
@@ -42,5 +44,5 @@ connect!(r, 4, 1)
 @test total_vertices(r) == 4
 @test list_outgoing(r, 1) == [2,3,4]
 
-
+@test length(list_edges(r)) == 2*6 
 

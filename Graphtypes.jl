@@ -47,8 +47,9 @@ function list_edges(g::Graph)
     edges = Array(Int64, 0, 2)
     for i in 1:size
         for j in 1:size
-            edges = [edges, [i j]]
-    end end
+            for k in 1:count_connections(g,i,j)
+                edges = [edges, [i j]]
+    end end end
     return edges
 end
 
