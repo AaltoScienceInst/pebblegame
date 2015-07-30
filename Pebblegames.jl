@@ -47,16 +47,14 @@ function solve_basic_pebble_game(graph::Graph, k::Int64, l::Int64)
             #successfully added an edge, move on
             continue
         else
-            if game.pebbles[i] < game.l+1
-                if !go_get_pebbles!(game, i, [i, j])
-                    rejected_count += 1
-                    continue
-            end end
-            if game.pebbles[j] < game.l+1
-                if !go_get_pebbles!(game, j, [i, j])
-                    rejected_count += 1
-                    continue
-            end end
+            if game.pebbles[i] + game.pebbles[j] < game.l+1
+                go_get_pebbles!(game, i, [i, j])
+                go_get_pebbles!(game, j, [i, j])
+            end
+            if game.pebbles[i] + game.pebbles[j] < game.l+1
+                rejected_count += 1
+                continue
+            end
             
             add_edge!(game, i, j)
     end end
@@ -70,7 +68,7 @@ function basic_pebble_game (s::Int64, k::Int64, l::Int64)
 end
 
 function add_edge!(p::PebbleGame, i::Int64, j::Int64)
-    if p.pebbles[i] < p.l+1 || p.pebbles[j] < p.l+1
+    if p.pebbles[i] + p.pebbles[j] < p.l+1
         return false
     end
     p.pebbles[i] -= 1
@@ -99,7 +97,7 @@ function go_get_pebbles!(game::PebbleGame, node::Int64,
     graph = game.graph
     pebbles = game.pebbles
     #helper function that looks for available pebbles and moves them to node
-    for i=1:(game.l+1 - pebbles[node]) #find missing pebbles for i
+    for i=1:(min(game.l+1,game.k) - pebbles[node]) #find missing pebbles for i
         path = depth_first_search(graph, node, total_vertices(graph), 
                                 (g,x)->(pebbles[x]>0), blacklist)
         
@@ -108,10 +106,7 @@ function go_get_pebbles!(game::PebbleGame, node::Int64,
         for pair in zip(path,path[2:end])
             x,y = pair
             slide_move!(game,y,x)
-    end end
-    #return whether collection was successful
-    return pebbles[node] == game.l+1
-end
+end end end
 
 
 end
