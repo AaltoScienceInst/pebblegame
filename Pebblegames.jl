@@ -42,37 +42,29 @@ function solve_basic_pebble_game(graph::Graph, k::Int64, l::Int64)
     for n=1:et
         i = edges[n,1]
         j = edges[n,2]
-        print(game,"\n")
 
-        print((i,j))
         if add_edge!(game, i, j)
             #successfully added an edge, move on
-            print("edge added!\n")
             continue
         else
             if game.pebbles[i] < game.l+1
-                print("looking for pebbles for i:")
                 if !go_get_pebbles!(game, i, [i, j])
                     rejected_count += 1
-                    print("failed")
                     continue
-                print("success")
             end end
             if game.pebbles[j] < game.l+1
-                print("looking for pebbles for j:")
                 if !go_get_pebbles!(game, j, [i, j])
                     rejected_count += 1
-                    print("failed")
                     continue
             end end
             
-            print(add_edge!(game, i, j))
+            add_edge!(game, i, j)
     end end
     return sum(game.pebbles), rejected_count
 end
 
 function basic_pebble_game (s::Int64, k::Int64, l::Int64)
-    g = simple_graph(s, true)
+    g = simple_graph(s)
     p = PebbleGame(g, k*ones(s), k ,l)
     return p
 end

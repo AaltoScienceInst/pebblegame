@@ -40,4 +40,7 @@ connect!(r, 4, 1)
 @test list_outgoing(r, 1) == [2,3,4]
 
 @test length(list_edges(r)) == 6 
+connect!(r, 2, 2)
+lv = list_edges(r)
+@test length(lv) == 2*4
 
