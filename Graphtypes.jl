@@ -3,10 +3,10 @@ module Graphtypes
 export
     Graph,
     SimpleGraph,
-    VertexGraph,
+    StructureGraph,
 
     simple_graph,
-    vertex_graph,
+    structure_graph,
 
     connected,
     count_connections,
@@ -21,28 +21,25 @@ export
 abstract Graph{directed, vertices}
 
 type SimpleGraph <: Graph
-    directed::Bool
     vertices::Matrix{Int64} #adjacency matrix
 end
 
-type VertexGraph <: Graph
-    directed::Bool
-    vertices::Matrix{Int64}
-    v_pos::Array{Float64,2}
+type StructureGraph <: Graph
+    #undirected, no duplicate edges
+    vertices::Matrix{Bool}
 end
 
-function simple_graph (v_count::Int64, directed::Bool=true)
-    g = SimpleGraph(directed, zeros(Int64, v_count, v_count))
+function simple_graph (v_count::Int64)
+    g = SimpleGraph(zeros(Int64, v_count, v_count))
     return g
 end
 
-function vertex_graph (v_pos::Array{Float64,2}, directed::Bool=true)
-    s = size(v_pos)[1]
-    g = VertexGraph (directed, zeros(Int64, s, s), v_pos)Â
+function structure_graph (v_count::Int64)
+    g = StructureGraph(zeros(Bool, v_count, v_count))
     return g
 end
 
-function list_edges(g::Graph)
+function list_edges(g::SimpleGraph)
     size = total_vertices(g)
     edges = Array(Int64, 0, 2)
     for i in 1:size
@@ -53,43 +50,56 @@ function list_edges(g::Graph)
     return edges
 end
 
-function list_outgoing(g::Graph, from::Int64)
-    if g.directed
-        return find( x->(x != 0), g.vertices[from, :])
-    else
-        return sort(unique([    find( x->(x != 0), g.vertices[from, :]),
+function list_edges(g::StructureGraph)
+    size = total_vertices(g)
+    edges = Array(Bool, 0, 2)
+    for i in 1:size
+        for j in i:size
+            if g.vertices[i,j]
+                edges = [edges, [i j]]
+    end end end
+    return edges
+end
+
+function list_outgoing(g::SimpleGraph, from::Int64)
+    return find( x->(x != 0), g.vertices[from, :])
+end
+
+function list_outgoing(g::StructureGraph, from::Int64)
+    return sort(unique([    find( x->(x != 0), g.vertices[from, :]),
                     find( x->(x != 0), g.vertices[:, from])]))
-end end
+end
 
 function connected(g::Graph, from::Int64, to::Int64)
-    if g.directed
-        return g.vertices[from, to] != 0
-    else
-        return g.vertices[from, to] !=0 || g.vertices[to, from] != 0
-    end
+    return g.vertices[from, to] != 0
 end
 
 function count_connections(g::Graph, from::Int64, to::Int64)
-    if g.directed
-        return g.vertices[from, to]
-    else
-        return g.vertices[from, to] + g.vertices[to, from]
-    end
+    return g.vertices[from, to]
 end
 
-function total_edges(g::Graph)
+function total_edges(g::SimpleGraph)
     return sum(g.vertices)
+end
+
+function total_edges(g::StructureGraph)
+    return sum(g.vertices)/2
 end
 
 function total_vertices(g::Graph)
     return size(g.vertices)[2]
 end
 
-function connect!(g::Graph, from::Int64, to::Int64)
+function connect!(g::SimpleGraph, from::Int64, to::Int64)
     g.vertices[from, to] += 1
 end
 
-function disconnect!(g::Graph, from::Int64, to::Int64)
+function connect!(g::StructureGraph, from::Int64, to::Int64)
+    g.vertices[from, to] = true
+    g.vertices[to, from] = true
+end
+
+function disconnect!(g::SimpleGraph, from::Int64, to::Int64)
     if g.vertices[from, to] > 0
         g.vertices[from, to] -= 1
         return true
@@ -98,6 +108,14 @@ function disconnect!(g::Graph, from::Int64, to::Int64)
     end
 end
 
+function disconnect!(g::StructureGraph, from::Int64, to::Int64)
+    if g.vertices[from, to]
+        g.vertices[from, to] = false
+        return true
+    else
+        return false
+    end
+end
 function reverse!(g::Graph, i1::Int64, i2::Int64)
     if disconnect!(g,i1,i2)
         connect!(g,i2,i1)

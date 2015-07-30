@@ -53,7 +53,7 @@ connect!(g, 5, 4)
 # |   |   |   |   |
 # o - o - o - o - o 20
 
-g = simple_graph(25,false)
+g = structure_graph(25)
 for i=(0:4)*5
     for j=1:5
         if j!=5

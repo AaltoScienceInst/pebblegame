@@ -29,13 +29,8 @@ connect!(g,5,4)
 @test total_vertices(g) == 10
 
 
-V = [   0.1 2.0;
-        4.0 2.5;
-        9.6 0.1;
-        7.1 6.5]
-
-#undirected vertex graph
-r = vertex_graph(V,false)
+#undirected structure graph
+r = structure_graph(4)
 connect!(r, 1, 3)
 connect!(r, 2, 1)
 connect!(r, 4, 1)
@@ -44,5 +39,5 @@ connect!(r, 4, 1)
 @test total_vertices(r) == 4
 @test list_outgoing(r, 1) == [2,3,4]
 
-@test length(list_edges(r)) == 2*6 
+@test length(list_edges(r)) == 6 
 
